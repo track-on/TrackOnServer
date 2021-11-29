@@ -19,8 +19,20 @@ public class UserController {
         return userService.getUserInfo(token);
     }
 
+    @GetMapping("/info/{userId}")
+    public UserResponse getTargetInfo(@RequestHeader("Authorization") String token,
+                                      @PathVariable Long userId) {
+        return userService.getTargetInfo(token, userId);
+    }
+
     @PostMapping
     public void signUp(@RequestBody SignUpRequest signUpRequest) {
         userService.signUp(signUpRequest);
+    }
+
+    @PutMapping("/{userId}")
+    public void makeAdmin(@RequestHeader("Authorization") String token,
+                          @PathVariable Long userId) {
+        userService.makeAdmin(token, userId);
     }
 }

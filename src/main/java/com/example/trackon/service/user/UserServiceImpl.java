@@ -1,5 +1,6 @@
 package com.example.trackon.service.user;
 
+import com.example.trackon.entity.user.Authority;
 import com.example.trackon.entity.user.User;
 import com.example.trackon.entity.user.UserRepository;
 import com.example.trackon.jwt.JwtProvider;
@@ -29,8 +30,24 @@ public class UserServiceImpl implements UserService {
                         .id(signUpRequest.getId())
                         .name(signUpRequest.getNickName())
                         .password(signUpRequest.getPassword())
+                        .age(signUpRequest.getAge())
+                        .authority(Authority.USER)
                         .build()
         );
+    }
+
+    @Override
+    public void makeAdmin(String token, Long userId) {
+        User user = userRepository.findByUserId(jwtProvider.getUserId(token))
+                .orElseThrow(RuntimeException::new);
+
+        if(user.getAuthority().equals(Authority.ADMIN))
+            throw new RuntimeException();
+
+        User target = userRepository.findByUserId(userId)
+                .orElseThrow(RuntimeException::new);
+
+        userRepository.save(target.updateAdmin());
     }
 
     @Override
@@ -39,7 +56,26 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(RuntimeException::new);
 
         return UserResponse.builder()
+                .userId(user.getUserId())
                 .nickName(user.getName())
+                .age(user.getAge())
+                .phoneNumber(user.getPhoneNumber())
+                .build();
+    }
+
+    @Override
+    public UserResponse getTargetInfo(String token, Long userId) {
+        userRepository.findByUserId(jwtProvider.getUserId(token))
+                .orElseThrow(RuntimeException::new);
+
+        User target = userRepository.findByUserId(userId)
+                .orElseThrow(RuntimeException::new);
+
+        return UserResponse.builder()
+                .userId(target.getUserId())
+                .phoneNumber(target.getPhoneNumber())
+                .age(target.getAge())
+                .nickName(target.getName())
                 .build();
     }
 }

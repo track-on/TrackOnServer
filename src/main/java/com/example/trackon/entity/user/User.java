@@ -25,4 +25,16 @@ public class User {
     private String password;
 
     private String name;
+
+    private Authority authority;
+
+    private String phoneNumber;
+
+    private Integer age;
+
+    public User updateAdmin() {
+        this.authority = Authority.ADMIN;
+
+        return this;
+    }
 }
