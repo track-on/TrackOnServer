@@ -40,6 +40,6 @@ public class ReportController {
     @DeleteMapping("/{reportId}")
     public void deleteReport(@RequestHeader("Authorization") String token,
                              @PathVariable Long reportId) {
-        reportService.deleteReport(token, reportId);
+        reportService.deleteReport(token, reportId );
     }
 }
