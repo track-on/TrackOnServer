@@ -29,3 +29,20 @@ jobs:
           name: seogunhee4/track-on-server:tagname
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_IP }}
+          username: ${{ secrets.REMOTE_SSH_ID }}
+          password:  ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.REMOTE_SSH_PORT }}
+          script: |
+            cd TrackOnServer/
+            git fetch --all
+            git reset --hard origin/main
+            git pull origin main
+            gradle build
+            docker rm -f track_on_server
+            docker build --tag track_on_server .
+            docker run -it --env-file /home/ubuntu/.track_env -d -p 7799:7799 -p 7798:7798 --name track_on_server track_on_server
