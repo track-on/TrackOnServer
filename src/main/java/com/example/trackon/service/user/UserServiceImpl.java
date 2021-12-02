@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
                         .password(signUpRequest.getPassword())
                         .age(signUpRequest.getAge())
                         .authority(Authority.USER)
+                        .phoneNumber(signUpRequest.getPhoneNumber())
                         .build()
         );
     }
