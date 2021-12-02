@@ -17,6 +17,7 @@ import com.example.trackon.payload.response.ReportResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ public class ReportServiceImpl implements ReportService{
     }
 
     @Override
+    @Transactional
     public void deleteReport(String token, Long reportId) {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
                 .orElseThrow(UserNotFoundException::new);
