@@ -6,6 +6,8 @@ import com.example.trackon.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/user")
@@ -23,6 +25,11 @@ public class UserController {
     public UserResponse getTargetInfo(@RequestHeader("Authorization") String token,
                                       @PathVariable Long userId) {
         return userService.getTargetInfo(token, userId);
+    }
+
+    @GetMapping("/all")
+    public List<UserResponse> getAllUser(@RequestHeader("Authorization") String token) {
+        return userService.getAllUser(token);
     }
 
     @PostMapping

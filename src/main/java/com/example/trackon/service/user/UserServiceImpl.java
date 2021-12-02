@@ -12,6 +12,9 @@ import com.example.trackon.payload.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -81,5 +84,30 @@ public class UserServiceImpl implements UserService {
                 .age(target.getAge())
                 .nickName(target.getName())
                 .build();
+    }
+
+    @Override
+    public List<UserResponse> getAllUser(String token) {
+        User user = userRepository.findByUserId(jwtProvider.getUserId(token))
+                .orElseThrow(UserNotFoundException::new);
+
+        if(!user.getAuthority().equals(Authority.ADMIN))
+            throw new DoNotHaveAuthorityException();
+
+        List<User> users = userRepository.findAll();
+        List<UserResponse> userResponses = new ArrayList<>();
+
+        for (User user1 : users) {
+            userResponses.add(
+                    UserResponse.builder()
+                            .userId(user1.getUserId())
+                            .phoneNumber(user1.getPhoneNumber())
+                            .age(user1.getAge())
+                            .nickName(user1.getName())
+                            .build()
+            );
+        }
+
+        return userResponses;
     }
 }
