@@ -9,7 +9,7 @@ public enum ErrorCode {
 
     INVALID_TOKEN("invalid token", 403),
     LOGIN_FAILED("login failed", 403),
-    DO_NOT_HAVE_AUTHORITY("do not have authority", 403),
+    DO_NOT_HAVE_AUTHORITY("do not have authority", 409),
     ALREADY_SIGNED("already signed", 403),
     USER_NOT_FOUND("user not found", 404),
     MARKER_NOT_FOUND("marker not found", 404),
