@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class ReportServiceImpl implements ReportService{
                         .marker(marker)
                         .message(message)
                         .reportType(ReportType.PROGRESS)
+                        .reportAt(LocalDateTime.now())
+                        .reporter(user)
                         .build()
         );
     }
