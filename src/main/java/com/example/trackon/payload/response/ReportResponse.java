@@ -1,5 +1,6 @@
 package com.example.trackon.payload.response;
 
+import com.example.trackon.entity.report.ReportType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,6 +13,9 @@ public class ReportResponse {
     private String reporter;
     private String name;
     private String message;
+    private String reportAt;
+    private ReportType reportType;
     private Double longitude;
     private Double latitude;
 }
+

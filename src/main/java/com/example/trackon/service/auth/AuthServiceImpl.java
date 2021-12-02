@@ -4,6 +4,8 @@ import com.example.trackon.entity.refresh_token.RefreshToken;
 import com.example.trackon.entity.refresh_token.RefreshTokenRepository;
 import com.example.trackon.entity.user.Authority;
 import com.example.trackon.entity.user.UserRepository;
+import com.example.trackon.error.exceptions.InvalidTokenException;
+import com.example.trackon.error.exceptions.LoginFailedException;
 import com.example.trackon.jwt.JwtProvider;
 import com.example.trackon.payload.request.SignInRequest;
 import com.example.trackon.payload.response.TokenResponse;
@@ -39,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
                             .refreshToken(refreshToken)
                             .build();
                 })
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(LoginFailedException::new);
     }
 
     @Override
@@ -61,13 +63,13 @@ public class AuthServiceImpl implements AuthService {
                             .accessToken(accessToken)
                             .refreshToken(refreshToken)
                             .build();
-                }).orElseThrow(RuntimeException::new);
+                }).orElseThrow(LoginFailedException::new);
     }
 
     @Override
     public TokenResponse refreshToken(String refreshToken) {
         if(!jwtProvider.isRefreshToken(refreshToken))
-            throw new RuntimeException();
+            throw new InvalidTokenException();
 
         return refreshTokenRepository.findByRefreshToken(refreshToken)
                 .map(refreshToken1 -> {
@@ -83,6 +85,6 @@ public class AuthServiceImpl implements AuthService {
                             .refreshToken(newRefreshToken)
                             .build();
                 })
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(LoginFailedException::new);
     }
 }

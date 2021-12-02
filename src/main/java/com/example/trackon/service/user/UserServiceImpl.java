@@ -3,6 +3,9 @@ package com.example.trackon.service.user;
 import com.example.trackon.entity.user.Authority;
 import com.example.trackon.entity.user.User;
 import com.example.trackon.entity.user.UserRepository;
+import com.example.trackon.error.exceptions.AlreadySignedException;
+import com.example.trackon.error.exceptions.DoNotHaveAuthorityException;
+import com.example.trackon.error.exceptions.UserNotFoundException;
 import com.example.trackon.jwt.JwtProvider;
 import com.example.trackon.payload.request.SignUpRequest;
 import com.example.trackon.payload.response.UserResponse;
@@ -23,7 +26,7 @@ public class UserServiceImpl implements UserService {
                         .orElse(null);
 
         if(user != null)
-            throw new RuntimeException("signed same user");
+            throw new AlreadySignedException();
 
         userRepository.save(
                 User.builder()
@@ -39,13 +42,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void makeAdmin(String token, Long userId) {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         if(user.getAuthority().equals(Authority.ADMIN))
-            throw new RuntimeException();
+            throw new DoNotHaveAuthorityException();
 
         User target = userRepository.findByUserId(userId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         userRepository.save(target.updateAdmin());
     }
@@ -53,7 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserInfo(String token) {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         return UserResponse.builder()
                 .userId(user.getUserId())
@@ -66,10 +69,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getTargetInfo(String token, Long userId) {
         userRepository.findByUserId(jwtProvider.getUserId(token))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         User target = userRepository.findByUserId(userId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         return UserResponse.builder()
                 .userId(target.getUserId())

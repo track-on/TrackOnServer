@@ -8,6 +8,10 @@ import com.example.trackon.entity.report.ReportType;
 import com.example.trackon.entity.user.Authority;
 import com.example.trackon.entity.user.User;
 import com.example.trackon.entity.user.UserRepository;
+import com.example.trackon.error.exceptions.DoNotHaveAuthorityException;
+import com.example.trackon.error.exceptions.MarkerNotFoundException;
+import com.example.trackon.error.exceptions.ReportNotFoundException;
+import com.example.trackon.error.exceptions.UserNotFoundException;
 import com.example.trackon.jwt.JwtProvider;
 import com.example.trackon.payload.response.ReportResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +34,10 @@ public class ReportServiceImpl implements ReportService{
     @Override
     public void report(String token, Long userId, String message) {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         Marker marker = markerRepository.findByMarkerId(userId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(MarkerNotFoundException::new);
 
         reportRepository.save(
                 Report.builder()
@@ -48,13 +52,13 @@ public class ReportServiceImpl implements ReportService{
     @Override
     public void submitReport(String token, Long reportId) {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         if(!user.getAuthority().equals(Authority.ADMIN))
-            throw new RuntimeException();
+            throw new DoNotHaveAuthorityException();
 
         Report report = reportRepository.findByReportId(reportId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(ReportNotFoundException::new);
 
         reportRepository.save(report.updateReportType(ReportType.INCREMENT));
     }
@@ -62,17 +66,21 @@ public class ReportServiceImpl implements ReportService{
     @Override
     public void deleteReport(String token, Long reportId) {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         if(!user.getAuthority().equals(Authority.ADMIN))
-            throw new RuntimeException();
+            throw new DoNotHaveAuthorityException();
 
+        reportRepository.findByReportId(reportId)
+                        .orElseThrow(ReportNotFoundException::new);
+
+        reportRepository.deleteByReportId(reportId);
     }
 
     @Override
     public List<ReportResponse> getMyReport(String token) {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         List<Report> reports = reportRepository.findAllByReporterOrderByReportAtDesc(user);
         return getReportResponses(reports);
@@ -81,10 +89,10 @@ public class ReportServiceImpl implements ReportService{
     @Override
     public List<ReportResponse> getAllReport(String token) {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(UserNotFoundException::new);
 
         if(!user.getAuthority().equals(Authority.ADMIN))
-            throw new RuntimeException();
+            throw new DoNotHaveAuthorityException();
 
         List<Report> reports = reportRepository.findAll(Sort.by(Sort.Direction.DESC, "reportAt"));
 
@@ -105,6 +113,8 @@ public class ReportServiceImpl implements ReportService{
                             .name(report.getMarker().getName())
                             .reporter(report.getReporter().getName())
                             .message(report.getMessage())
+                            .reportAt(report.getReportAt().toLocalDate().toString())
+                            .reportType(report.getReportType())
                             .build()
             );
         }
