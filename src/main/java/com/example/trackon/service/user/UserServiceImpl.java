@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService {
                 .nickName(user.getName())
                 .age(user.getAge())
                 .phoneNumber(user.getPhoneNumber())
+                .authority(user.getAuthority())
                 .build();
     }
 
@@ -83,6 +84,7 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(target.getPhoneNumber())
                 .age(target.getAge())
                 .nickName(target.getName())
+                .authority(target.getAuthority())
                 .build();
     }
 
@@ -104,6 +106,7 @@ public class UserServiceImpl implements UserService {
                             .phoneNumber(user1.getPhoneNumber())
                             .age(user1.getAge())
                             .nickName(user1.getName())
+                            .authority(user1.getAuthority())
                             .build()
             );
         }
