@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUserId(jwtProvider.getUserId(token))
                 .orElseThrow(UserNotFoundException::new);
 
-        if(user.getAuthority().equals(Authority.ADMIN))
+        if(!user.getAuthority().equals(Authority.ADMIN))
             throw new DoNotHaveAuthorityException();
 
         User target = userRepository.findByUserId(userId)
