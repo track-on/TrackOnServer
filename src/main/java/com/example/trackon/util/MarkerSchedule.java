@@ -21,7 +21,7 @@ public class MarkerSchedule {
     private final MarkerRepository markerRepository;
     private final SocketIOServer server;
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "*/5 * * * * *")
     public void maker() {
         log.info("marker");
 
