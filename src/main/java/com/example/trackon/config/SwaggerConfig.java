@@ -104,8 +104,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
     //api info
     private ApiInfo getApiInfo() {
         return new ApiInfo(
-                "FindApple API Docs",
-                "FindApple Project Docs",
+                "TrackOn API Docs",
+                "TrackOn Project Docs",
                 "1.0.0",
                 "Terms of Service URL",
                 "Contact Name",
