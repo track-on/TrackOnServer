@@ -25,4 +25,11 @@ public class Marker {
     private Double latitude;
 
     private String name;
+
+    public Marker updateLocation(Double longitude, Double latitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+
+        return this;
+    }
 }
